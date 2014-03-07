@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
+        <link href="style.css" rel="stylesheet">
+        <script src="TURTED.js" type="text/javascript"></script>
+
+    </head>
+    <body lang="en">
+
+        <h3>TURTED Client example</h3>
+
+        <div id="first" class="box">
+            <div></div>
+            <form><input autocomplete="off" placeholder="Type here..." /></form>
+            <button id="ok">Say Hello</button>
+            <button id="echo">ECHO</button>
+        </div>
+
+        <script type="text/javascript">
+
+            //set the url of the server
+            var turted_url = 'http://localhost/turted';
+
+            //create an instance, passing the url
+            var turted = new TURTED(turted_url);
+
+            //send an identification request so you are logging in with user id, user name and a token.
+            //the token should be obtainted from the server via a trusted way so it can be used to verify the authentication
+            turted.ident(1, "xosofox", 12341234);
+
+            //join a channel named chat
+            turted.join("chat");
+
+            //if the server dispatches an event called "welcome" to our client, react on it
+            turted.on("welcome", function (data) {
+                alert("I am welcome");
+            })
+
+            //if the server dispatches an event called "message" to our client, react on it
+            //it is used here to work as a basic chat application
+            turted.on("message", function (data) {
+                //console.log(data);
+                addLine("->", data);
+            })
+
+        </script>
+
+        <script type="text/javascript">
+
+            $('#first input').focus();
+
+            $('#echo').click(function () {
+                turted.echo("Hello, echo!!");
+            })
+
+            $('#ok').click(function () {
+                turted.send("Hello");
+            })
+
+            var div = $('#first div');
+            var inp = $('#first input');
+            var form = $('#first form');
+
+            var addLine = function (m, p) {
+                p = (p === undefined) ? '' : JSON.stringify(p);
+                div.append($("<code>").text(m + ' ' + p));
+                div.append($("<br>"));
+                div.scrollTop(div.scrollTop() + 10000);
+            };
+
+            form.submit(function () {
+                addLine('[ ] sending', inp.val());
+                turted.send(inp.val());
+                inp.val('');
+                return false;
+            });
+
+        </script>
+
+    </body>
+</html>
