@@ -130,8 +130,8 @@ TURTED.prototype.processQueue = function () {
 
 TURTED.prototype.processReconnectQueue = function () {
     var emergency = 100;
-    while ((this.reconnectQueue.length > 0) && (emergency > 0)) {
-        var f = this.reconnectQueue.shift();
+    for (var i=0;i<this.reconnectQueue.length;i++) {
+        var f = this.reconnectQueue[i];
         if (typeof f === "function") {
             f();
         }
