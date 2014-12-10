@@ -15,20 +15,26 @@ var TURTED = function (sockjs_url) {
             if (isReconnect) {
                 me.processReconnectQueue()
             }
-        }
+        };
+
         sockjs.onmessage = function (e) {
             //console.log("Sock gives me ", e);
             data = JSON.parse(e.data);
             //console.log("After parsing I have ", data);
             var type = data.type;
             var data = data.data;
+            var via = data.via || {"*": "*"};
+            var lowLevel = {};
+            lowLevel.type = type;
+            lowLevel.data = data;
+            lowLevel.via = via;
 
             //console.log(type, data);
             if (typeof me.callbacks[type] === "object") {
                 var l = me.callbacks[type].length;
                 console.log("Triggering callbacks on ", type);
                 for (var i = 0; i < l; i++) {
-                    me.callbacks[type][i].call(me, data);
+                    me.callbacks[type][i].call(lowLevel, data);
                 }
             }
         };
@@ -45,7 +51,7 @@ var TURTED = function (sockjs_url) {
         this.nativeConnection = sockjs;
     }
 
-    this.reconnect = function() {
+    this.reconnect = function () {
         this.connect(true);
     }.bind(this);
 
@@ -130,7 +136,7 @@ TURTED.prototype.processQueue = function () {
 
 TURTED.prototype.processReconnectQueue = function () {
     var emergency = 100;
-    for (var i=0;i<this.reconnectQueue.length;i++) {
+    for (var i = 0; i < this.reconnectQueue.length; i++) {
         var f = this.reconnectQueue[i];
         if (typeof f === "function") {
             f();
