@@ -2,18 +2,19 @@
 <html>
     <head>
         <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
+        <!-- let socket.io server send us the library file -->
+        <script src="http://localhost:7117/socket.io/socket.io.js"></script>
+
         <link href="style.css" rel="stylesheet">
         <script src="TURTED.js" type="text/javascript"></script>
 
     </head>
     <body lang="en">
-
         <h3>TURTED Client example</h3>
 
         <div id="first" class="box">
             <div></div>
-            <form><input autocomplete="off" placeholder="Type here..." /></form>
+            <form><input autocomplete="off" placeholder="Type here..."/></form>
             <button id="ok">Say Hello</button>
             <button id="echo">ECHO</button>
         </div>
@@ -21,29 +22,41 @@
         <script type="text/javascript">
 
             //set the url of the server
-            var turted_url = 'http://localhost/turted';
+            var turted_url = 'http://localhost:7117/';
 
             //create an instance, passing the url
             var turted = new TURTED(turted_url);
 
-            //send an identification request so you are logging in with user id, user name and a token.
-            //the token should be obtained from the server via a trusted way so it can be used to verify the authentication
-            turted.ident(1, "xosofox", 12341234);
+            //send an identification request so you are logging in with a username.
+            turted.ident({username: "xosofox"});
 
-            //join a channel named chat
+            //the token should be obtained from the server via a trusted way so it can be used to verify the authentication
+            //turted.ident({username: "xosofox", token: "<?php echo $token ?>"});
+
+            //join a channel named "chat"
             turted.join("chat");
+            //after five seconds, join a second chat - yes, this is for testing purposes only...
+            setTimeout(function() {
+                turted.join("latechat");
+            },5000);
 
             //if the server dispatches an event called "welcome" to our client, react on it
-            turted.on("welcome", function (data) {
-                alert("I am welcome");
+            turted.on("welcome", function(data) {
+                addLine("Server says I am welcome as ", data);
             })
 
-            //if the server dispatches an event called "message" to our client, react on it
-            //it is used here to work as a basic chat application
-            turted.on("message", function (data) {
-                //console.log(data);
+            //if the server dispatches an event "MESSAGE:NEW" to our client, react on it
+            turted.on("MESSAGE:NEW", function(data) {
+                console.log(data);
                 addLine("->", data);
             })
+
+            //echo tells the server to send the same data back
+            turted.on("ECHO", function(data) {
+                console.log(data);
+                addLine("->", data);
+            });
+
 
         </script>
 
@@ -51,11 +64,11 @@
 
             $('#first input').focus();
 
-            $('#echo').click(function () {
+            $('#echo').click(function() {
                 turted.echo("Hello, echo!!");
             })
 
-            $('#ok').click(function () {
+            $('#ok').click(function() {
                 turted.send("Hello");
             })
 
@@ -63,14 +76,14 @@
             var inp = $('#first input');
             var form = $('#first form');
 
-            var addLine = function (m, p) {
+            var addLine = function(m, p) {
                 p = (p === undefined) ? '' : JSON.stringify(p);
                 div.append($("<code>").text(m + ' ' + p));
                 div.append($("<br>"));
                 div.scrollTop(div.scrollTop() + 10000);
             };
 
-            form.submit(function () {
+            form.submit(function() {
                 addLine('[ ] sending', inp.val());
                 turted.send(inp.val());
                 inp.val('');

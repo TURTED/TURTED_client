@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <link href="style.css" rel="stylesheet">
+
+    </head>
+    <body lang="en">
+
+        <h3>TURTED Server Push example</h3>
+        <p>The purpose of this demo is to show how a data package can be created and pushed to the server via HTTP POST.
+            The same approach could be used by any client or server to send a package for dispatch</p>
+        REST style POST
+        <form id="restpost" action="?#">
+            Cmd: <select name="pushcmd" id="pushcmd">
+            <option value="notifyUser">notifyUser</option>
+            <option value="notifyChannel">notifyChannel</option>
+            <option value="notifyAll">notifyAll</option>
+        </select><br/>
+            Event: <input type="text" id="event" placeholder="event type" value="MESSAGE:NEW"><br>
+            Target: <input type="text" id="target" placeholder="user or channel" value="xosofox"><br/>
+            Passwd: <input type="text" id="pushpasswd" value="IamAllowed2PUSH!!!"><br/>
+            URL: <input type="text" id="baseUrl" value="http://localhost:7117/push/" name="baseUrl"/><br>
+            <br>
+            Payload: <input type="text" id="payload" value="Data to deliver"> (you can send an object as well in your code, here it is just a string)<br/>
+            <br>
+            What will be sent to the server:<br>
+            <textarea id="postcontent" style="width: 300px; font-size: 8pt; height: 250px"></textarea>
+            <input type="button" value="Push" id="pushit" style="height: 150px; width: 150px; font-size: 20pt">
+        </form>
+
+        <script type="text/javascript">
+
+            function rebuildContent() {
+                var pushcmd = $('#pushcmd').val();
+                var password = $('#pushpasswd').val();
+                var event = $('#event').val();
+                var targetlist = $('#target').val();
+                var data = $('#payload').val();
+
+                return {
+                    "cmd": pushcmd,
+                    "password": password,
+                    "data": {
+                        "event": event,
+                        "channels": [targetlist],
+                        "user": [targetlist],
+                        "payload": data
+                    }
+                };
+            }
+
+            function rebuildAll() {
+                var content = rebuildContent();
+                var baseUrl = $('#baseUrl').val();
+                $('#postcontent').val(JSON.stringify(content, null, 4));
+                return content;
+            }
+
+            $('form').on("keyup change", "input,select", rebuildAll);
+            $('#pushit').on("click", function() {
+                var content = rebuildAll();
+                var url = $('#baseUrl').val();
+                console.log("Pushing data");
+                //use ajax to be able to set the content type to JSON
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: url,
+                    data: JSON.stringify(content),
+                    dataType: "json",
+                    complete: function(a, b, c, d) {
+                        console.log(a);
+                        console.log(b);
+                    }
+                });
+            })
+
+            rebuildAll();
+
+        </script>
+    </body>
+</html>
