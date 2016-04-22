@@ -16,6 +16,9 @@ To achive that, you can send events from the appliaction server (php, ...) with 
 
 In this example, the "push.html" simulates the "application server" by sending the POST request to the TURTED server. The event will then be redirected to the clients.
 
+#This example#
+Open index.html in one tab/browser and push.html in another
+For extended fun, open index.html in MANY tabs
 
 ##index.html##
 This example shows how to "ident" on the server (logging in with a username) and how to react on messages that are sent from push.html
