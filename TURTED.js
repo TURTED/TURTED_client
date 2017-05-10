@@ -1,4 +1,4 @@
-var TURTED = function(url) {
+var TURTED = function(url, optIO) {
     var me = this;
     this.callbacks = {};
     this.nativeConnection = {};
@@ -6,13 +6,18 @@ var TURTED = function(url) {
     this.reconnectQueue = [];
     this.isConnected = false;
     this.retryTimeout = 1;
+    if (optIO) {
+        this.io = optIO;
+    } else {
+        this.io = io;
+    }
 
     this.connect = function(isReconnect) {
-        console.log("native triggered connect");
-        console.log("I connect");
-        var native = io(url);
+        //console.log("native triggered connect");
+        //console.log("I connect");
+        var native = this.io(url);
         native.on("connect", function() {
-            console.log("I am connected now and will fire queued events here");
+            //console.log("I am connected now and will fire queued events here");
             me.isConnected = true;
             me.processQueue();
         });
@@ -25,22 +30,22 @@ var TURTED = function(url) {
             var type = e.event;
             var data = e.payload;
 
-            console.log(type, data);
+            //console.log(type, data);
             me.processCallbacks(type, data);
         });
 
         native.onerror = function(e) {
-            console.log("Error", e)
+            console.error("Error", e)
         };
-        
+
         native.onclose = function() {
             this.isConnected = false;
-            console.log("Retry in", this.retryTimeout);
+            //console.log("Retry in", this.retryTimeout);
             setTimeout(this.connect.bind(this), (this.retryTimeout++) * 1000);
         }.bind(this);
 
         native.on("reconnect", function(data) {
-            console.log("native triggered reconnect");
+            //console.log("native triggered reconnect");
             me.processReconnectQueue();
         });
         this.nativeConnection = native;
@@ -57,7 +62,7 @@ TURTED.prototype.on = function(on, f) {
 };
 
 TURTED.prototype.ident = function(data) {
-    console.log("enqueue the *ident* action until connected");
+    //console.log("enqueue the *ident* action until connected");
     var f = function() {
         this.nativeConnection.emit("IDENT", data);
     }.bind(this);
@@ -123,7 +128,7 @@ TURTED.prototype.processReconnectQueue = function() {
 TURTED.prototype.processCallbacks = function(type, data) {
     if (typeof this.callbacks[type] === "object") {
         var l = this.callbacks[type].length;
-        console.log("Triggering callbacks on ", type);
+        //console.log("Triggering callbacks on ", type);
         for (var i = 0; i < l; i++) {
             this.callbacks[type][i](data);
         }

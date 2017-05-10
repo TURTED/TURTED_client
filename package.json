@@ -1,0 +1,25 @@
+{
+  "name": "turted-client",
+  "version": "1.1.0",
+  "description": "Client to communicate with TURTED server",
+  "main": "TURTED.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TURTED/TURTED_client.git"
+  },
+  "keywords": [
+    "realtime",
+    "event",
+    "client",
+    "push"
+  ],
+  "author": "Peter Dietrich",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TURTED/TURTED_client/issues"
+  },
+  "homepage": "https://github.com/TURTED/TURTED_client#readme"
+}
