@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://turted.karopapier.de/socket.io/socket.io.js"></script>
+
+    <link href="style.css" rel="stylesheet">
+    <script src="TURTED.js" type="text/javascript"></script>
+
+</head>
+<body lang="en">
+
+<h3>TURTED Server load creator</h3>
+<p>The purpose of this demo is to create a lot of connections to a server by connecting, joinging channels and sending
+    echo requests</p>
+<form id="restpost" action="?#">
+    Server: <input type="url" id="host" placeholder="http://turted.example.com/"><br>
+    Number of clients:
+    <input type="number" id="num_clients" value="10" placeholder="number of clients to simulate"><br/>
+    Number of channels to join: <input type="number" id="num_channels" value="3"><br/>
+    <input type="button" value="Start" id="start" style="height: 150px; width: 150px; font-size: 20pt">
+</form>
+
+<script type="text/javascript">
+    function gid(id) {
+        return document.getElementById(id);
+    }
+
+    $('#start').on("click", function () {
+        var num_clients = parseInt(gid("num_clients").value);
+        var num_channels = parseInt(gid("num_channels").value);
+        var host = gid("host").value;
+        if (!host) {
+            alert("Enter host");
+            return;
+        }
+
+        console.log("Starting client", c);
+
+        var clients = [];
+
+        for (var c = 0; c < num_channels; c++) {
+            var t = new TURTED(host);
+            t.ident({"username": "loady" + c});
+            t.join("channel" + c);
+            clients[c] = t;
+        }
+    });
+
+</script>
+</body>
+</html>
