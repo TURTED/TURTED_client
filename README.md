@@ -17,6 +17,10 @@ To achive that, you can send events from the appliaction server (php, ...) with 
 In this example, the "push.html" simulates the "application server" by sending the POST request to the TURTED server. The event will then be redirected to the clients.
 
 # This example
+
+This assumes that you are running a local node server according to https://github.com/TURTED/TURTED_node/tree/master/examples
+by running `node server.js`
+
 Open index.html in one tab/browser and push.html in another
 For extended fun, open index.html in MANY tabs
 

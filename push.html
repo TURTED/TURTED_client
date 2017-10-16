@@ -15,14 +15,15 @@
             Cmd: <select name="pushcmd" id="pushcmd">
             <option value="notifyUser">notifyUser</option>
             <option value="notifyChannel">notifyChannel</option>
-            <option value="notifyAll">notifyAll</option>
+            <option value="notifyAll" selected="selected">notifyAll</option>
         </select><br/>
             Event: <input type="text" id="event" placeholder="event type" value="MESSAGE:NEW"><br>
             Target: <input type="text" id="target" placeholder="user or channel" value="xosofox"><br/>
             Passwd: <input type="text" id="pushpasswd" value="IamAllowed2PUSH!!!"><br/>
             URL: <input type="text" id="baseUrl" value="http://localhost:7117/push/" name="baseUrl"/><br>
             <br>
-            Payload: <input type="text" id="payload" value="Data to deliver"> (you can send an object as well in your code, here it is just a string)<br/>
+            Payload:
+            <input type="text" id="payload" value="Data to deliver"> (you can send an object as well in your code, here it is just a string)<br/>
             <br>
             What will be sent to the server:<br>
             <textarea id="postcontent" style="width: 300px; font-size: 8pt; height: 250px"></textarea>
@@ -40,7 +41,9 @@
 
                 return {
                     "cmd": pushcmd,
-                    "password": password,
+                    "auth": {
+                        "password": password,
+                    },
                     "data": {
                         "event": event,
                         "channels": [targetlist],
