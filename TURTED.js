@@ -3,7 +3,7 @@
     if (typeof define === "function" && define.amd) {
         define(["io"], factory);
     } else if (typeof module === "object" && module.exports) {
-        module.exports = factory(require("io"));
+        module.exports = factory(require("socket.io-client"));
     } else {
         root.TURTED = factory(root.io);
     }
