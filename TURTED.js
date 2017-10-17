@@ -19,13 +19,13 @@
         if (optIO) {
             this.io = optIO;
         } else {
-            this.io = io;
+            this.io = io(url);
         }
 
         this.connect = function(isReconnect) {
             //console.log("native triggered connect");
             //console.log("I connect");
-            var native = this.io(url);
+            var native = this.io;
             native.on("connect", function() {
                 //console.log("I am connected now and will fire queued events here");
                 me.isConnected = true;
